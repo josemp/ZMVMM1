@@ -19,6 +19,10 @@ namespace zmvvm1
         {
            
         }
+        public BasicBindClass(T valor)
+        {
+            _data = valor;
+        }
         public BasicBindClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<T> valida)
         {
             // this.basicStringBind();
@@ -26,6 +30,15 @@ namespace zmvvm1
            
             this.valida = valida;
         }
+        public BasicBindClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<T> valida,T valor)
+        {
+            // this.basicStringBind();
+            this.notifyDataErrorInfo = notifyDataErrorInfo;
+
+            this.valida = valida;
+            _data = valor;
+        }
+
         public BasicBindClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<T> valida, bool esObligatorio)
         {
             // this.basicStringBind();
@@ -33,6 +46,15 @@ namespace zmvvm1
            
             this.valida = valida;
             this.esObligatorio = esObligatorio;
+        }
+        public BasicBindClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<T> valida, bool esObligatorio, T valor)
+        {
+            // this.basicStringBind();
+            this.notifyDataErrorInfo = notifyDataErrorInfo;
+
+            this.valida = valida;
+            this.esObligatorio = esObligatorio;
+            _data = valor;
         }
         string nameProperty = "b_data";
         String sError;

@@ -8,10 +8,12 @@ namespace zmvvm1
 {
     public delegate void executeCommandDel(string parameter);
     public delegate bool canExecuteCommandDel(string parameter);
+   
     public class CommandClass 
     {
         executeCommandDel executeCommand = null;
         canExecuteCommandDel canExecuteCommand = null;
+   
 
 
             private readonly DelegateCommandClass<string> _command;
@@ -19,6 +21,10 @@ namespace zmvvm1
             public DelegateCommandClass<string> command
             {
                 get { return _command; }
+            }
+        public void notifyChange()
+            {            
+                _command.RaiseCanExecuteChanged();
             }
         public CommandClass(canExecuteCommandDel canExecuteCommand, executeCommandDel executeCommand)
         {
