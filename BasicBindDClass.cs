@@ -10,21 +10,21 @@ namespace zmvvm1
     /// <summary>
     /// 
     /// </summary>
-    public delegate bool validaDel<T>(T value, ref string sError);
+    //public delegate bool validaDel<T>(T value, ref string sError);
 
-    public class BasicBindClass<T> : ViewModelBindBaseClass
+    public class BasicBindDClass : ViewModelBindBaseClass
     {
         //public NotifyDataErrorInfoClass notifyDataErrorInfo;
-        public BasicBindClass()
+        public BasicBindDClass()
         {
            
         }
 
-        public BasicBindClass(T valor)
+        public BasicBindDClass(Double? valor)
         {
             _data = valor;
         }
-        public BasicBindClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<T> valida,CommandClass comando)
+        public BasicBindDClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<Double?> valida,CommandClass comando)
         {
             // this.basicStringBind();
             this.notifyDataErrorInfo = notifyDataErrorInfo;
@@ -42,7 +42,7 @@ namespace zmvvm1
             _data = valor;
         }
         */
-        public BasicBindClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<T> valida, bool esObligatorio,CommandClass comando)
+        public BasicBindDClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<Double?> valida, bool esObligatorio,CommandClass comando)
         {
             // this.basicStringBind();
             this.notifyDataErrorInfo = notifyDataErrorInfo;
@@ -51,7 +51,7 @@ namespace zmvvm1
             this.esObligatorio = esObligatorio;
             this.comando = comando;
         }
-        public BasicBindClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<T> valida, bool esObligatorio, T valor, CommandClass comando)
+        public BasicBindDClass(NotifyDataErrorInfoDictionaryClass notifyDataErrorInfo, validaDel<Double?> valida, bool esObligatorio, Double? valor, CommandClass comando)
         {
             // this.basicStringBind();
             this.notifyDataErrorInfo = notifyDataErrorInfo;
@@ -70,28 +70,46 @@ namespace zmvvm1
         String sError;
         bool esObligatorio = false;
         CommandClass comando=null;
-        private validaDel<T> valida = null;
-        private T _data { get; set; }
-        private T _b_data { get; set; }
+        private validaDel<Double?> valida = null;
+        private Double? _data { get; set; }
+        private string _b_data { get; set; }
 
         // binded propertye
-        public T b_data
+        public string b_data
         {
-            get { if ( notifyDataErrorInfo!=null && notifyDataErrorInfo.HasErrorProperty(nameProperty) == true) return (_b_data); else  return (_data); }
-            set
+            get
             {
 
 
+                
+                    if (notifyDataErrorInfo != null && notifyDataErrorInfo.HasErrorProperty(nameProperty) == true) return (_b_data);
+                    else
+                    {
+                        if (_data == null)
+                            return (null);
+                        return(_data.ToString());
+                    }
+            }
+            set
+            {
                // if (valida != null)
                 {
 
-                    T valor = value;
+                    string valor = value;
+                    Double valorDouble;
+                    
+                    if (Double.TryParse(valor, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CurrentCulture, out valorDouble) == false)
+                    {
+                        _b_data = valor;
+                        RaiseErrorsChanged(nameProperty, "Numero Error");
+                        if (comando != null)
+                            comando.notifyChange();
+                        return;
+
+                    }
                     if (esObligatorio == true)
                     {
-                        if (valor == null 
-                            || (typeof(T)==typeof(String) && valor.ToString() == "")
-                            || (typeof(T) == typeof(string) && valor.ToString() == "")
-                            )
+                        if (valor == null)
                         {
                             _b_data = valor;
                             RaiseErrorsChanged(nameProperty, "Dato obligatorio");
@@ -101,20 +119,17 @@ namespace zmvvm1
                         }
                     }
 
-                    if (valida==null || valida(valor, ref sError) == true)
+                    if (valida==null || valida(valorDouble, ref sError) == true)
                     {
 
-                        _data = valor;
+                        _data = valorDouble;
                         ClearErrors(nameProperty);
-                        if (comando != null)
-                            comando.notifyChange();
                         // Cuidado con valores recursivos
                     }
                     else
                     {
                         _b_data = valor;
                         RaiseErrorsChanged(nameProperty, sError);
-
                         if (comando != null) comando.notifyChange();
                         // Cuidado con valores recursivos
                     }
@@ -123,14 +138,18 @@ namespace zmvvm1
             }
         }
 
-        public T data
+        public Double? data
         {
             get { return (_data); }
             set
             {
-                b_data = value;
+                b_data = value.ToString();
                 NotifyOfPropertyChanged(nameProperty);
             }
+        }
+        public static T ConvertValue<T>(string value)
+        {
+            return (T)Convert.ChangeType(value, typeof(T));
         }
     }
 }

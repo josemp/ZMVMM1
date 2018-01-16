@@ -39,7 +39,7 @@ namespace zmvvm1
         string nameProperty = "b_data";
         String sError;
         bool esObligatorio = false;
-
+        CommandClass comando;
         private validaDoubleDel valida = null;
         private double? _data { get; set; }
         private String _b_data { get; set; }
